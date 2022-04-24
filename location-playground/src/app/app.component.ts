@@ -11,24 +11,27 @@ export class AppComponent {
   title = 'location-playground';
   latitude: number = 0;
   longitude: number = 0;
-  
+  watcherId: number = 0;  
 
   constructor(){
     componentContext = this;
   }
 
-  getLocation(){
+  onStartLocationWatch(){
     var options = {
       enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
+      timeout: 27000,
+      maximumAge: 30000
     };
     
-    navigator.geolocation.getCurrentPosition((position) => {
-      console.log(position);
+    this.watcherId = navigator.geolocation.watchPosition((position) => {      
       componentContext.latitude = position.coords.latitude;
       componentContext.longitude = position.coords.longitude;      
-    }, null, options)
-    
+    }, null, options)    
+  }
+
+  onStopLocationWatch()
+  {
+    navigator.geolocation.clearWatch(this.watcherId);
   }
 }

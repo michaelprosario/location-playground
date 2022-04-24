@@ -1,8 +1,10 @@
 <h1>Location Tests</h1>
 
-<button (click)="getLocation()">Get location</button>
+<button (click)="onStartLocationWatch()">Start location watch</button>
+<button (click)="onStopLocationWatch()">Stop location watch</button>
+
+<br><br>
 
 <div>
-  <div>Lat: {{latitude}}</div>
-  <div>Long: {{longitude}}</div>  
+<div>Lat,Long: {{latitude}},{{longitude}} </div>  
 </div>
