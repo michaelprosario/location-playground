@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-
-let componentContext: any = null;
+import { GeoLocationService } from './geo-location-service';
 
 @Component({
   selector: 'app-root',
@@ -11,27 +10,34 @@ export class AppComponent {
   title = 'location-playground';
   latitude: number = 0;
   longitude: number = 0;
-  watcherId: number = 0;  
+  positionChangedSubscription: any;
 
-  constructor(){
-    componentContext = this;
-  }
-
-  onStartLocationWatch(){
-    var options = {
-      enableHighAccuracy: true,
-      timeout: 27000,
-      maximumAge: 30000
-    };
+  constructor(private geoLocationService: GeoLocationService){
     
-    this.watcherId = navigator.geolocation.watchPosition((position) => {      
-      componentContext.latitude = position.coords.latitude;
-      componentContext.longitude = position.coords.longitude;      
-    }, null, options)    
   }
+
+  onReceivePosition(position:any){
+    console.log(position);
+    this.latitude = position.coords.latitude;
+    this.longitude = position.coords.longitude; 
+  }
+
+  onStartLocationWatch()
+  {
+    this.geoLocationService.enable();
+    this.positionChangedSubscription = this.geoLocationService.positionChanged    
+    .subscribe((position:any) => this.onReceivePosition(position));
+
+    setTimeout(() => this.onStopLocationWatch(), 20000);
+  }
+
+  ngOnDestroy() {
+    this.positionChangedSubscription.unsubscribe();
+  }  
 
   onStopLocationWatch()
   {
-    navigator.geolocation.clearWatch(this.watcherId);
-  }
+    this.geoLocationService.disable();
+    this.positionChangedSubscription.unsubscribe()
+  }  
 }
